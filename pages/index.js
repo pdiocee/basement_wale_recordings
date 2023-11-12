@@ -17,7 +17,7 @@ export default function Page() {
       <main>
         <Typography variant="h2" component="h2" sx={{ padding: '1rem', textAlign: 'center' }}>Basement Wale</Typography>
         <Typography variant="body1" sx={{ padding: '1rem', textAlign: 'center' }}>Click on a shabad card and press play to listen!</Typography>
-        <Container>
+        <Container sx={{ paddingBottom: '15rem' }}>
             <ShabadCard />
         </Container>
       </main>
