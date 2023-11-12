@@ -1,0 +1,32 @@
+{
+  "name": "basement-wale-audio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/merriweather": "^5.0.8",
+    "@fontsource/playfair-display": "^5.0.17",
+    "@fontsource/poppins": "^5.0.8",
+    "@mui/icons-material": "^5.14.16",
+    "@mui/material": "^5.14.17",
+    "firebase": "^10.6.0",
+    "install": "^0.13.0",
+    "next": "14.0.2",
+    "npm": "^10.2.3",
+    "react": "^18",
+    "react-audio-player": "^0.17.0",
+    "react-dom": "^18",
+    "react-h5-audio-player": "^3.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.0.2"
+  }
+}
