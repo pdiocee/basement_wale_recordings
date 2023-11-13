@@ -44,8 +44,12 @@ const FirestoreData = () => {
           shabadName: doc.data().shabad_name,
           ...doc.data(),
         }));
-        setData(fetchedData);
-        setFilteredData(fetchedData);
+
+        const sortedData = fetchedData.sort((a, b) =>
+          a.shabadName.localeCompare(b.shabadName)
+        );
+        setData(sortedData);
+        setFilteredData(sortedData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -90,7 +94,7 @@ const FirestoreData = () => {
         }}
       />
 
-      <List sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1rem', flexDirection: { sm: "column", md: "column", lg: "row", xl: "row" } }}>
+      <List sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1rem', flexDirection: { sm: "column", md: "column", lg: "column", xl: "column" } }}>
         {filteredData.map((item) => (
           <div key={item.id} style={{ flexBasis: '40%' }}>
           <Card
