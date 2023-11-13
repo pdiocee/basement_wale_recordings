@@ -88,6 +88,12 @@ const ShabadAudioPlayer = ({ audioPath, trackName, raag, taal, date, onPlaybackC
       audioPlayerRef.current.audio.current.play();
       onPlaybackChange('play');
     }
+
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title: currentTrackName,
+      });
+    }
   };
 
   const handlePause = () => {
