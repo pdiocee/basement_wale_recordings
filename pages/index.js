@@ -12,7 +12,7 @@ export default function Page() {
       <Head>
         <title>Basement Wale</title>
         <meta name="description" content="For recordings of the Basement Wale." />
-        <link rel="icon" href="favicon.ico" sizes="any"/>
+        <link rel="icon" href="khanda.png" sizes="any"/>
       </Head>
       <main>
         <Typography variant="h2" component="h2" sx={{ padding: '1rem', textAlign: 'center' }}>Basement Wale</Typography>
