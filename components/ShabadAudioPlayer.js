@@ -92,6 +92,7 @@ const ShabadAudioPlayer = ({ audioPath, trackName, raag, taal, date, onPlaybackC
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new window.MediaMetadata({
         title: currentTrackName,
+        artist: 'Basement Wale'
       });
     }
   };
