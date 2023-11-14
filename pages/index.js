@@ -28,7 +28,7 @@ export default function Page() {
             </Link>
             <Typography variant="h4" sx={{ padding: '1rem', textAlign: 'center', }}>Welcome to the Basement&nbsp;Wale Database</Typography>
             <Typography variant="body1" sx={{ padding: '0 1rem 1rem 1rem', textAlign: 'center' }}>Click on a shabad card and press&nbsp;play&nbsp;to&nbsp;listen!</Typography>
-            <Container sx={{ paddingBottom: '15rem' }}>
+            <Container sx={{ paddingBottom: '20rem' }}>
               <ShabadCard />
             </Container>
           </>
