@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import firebaseApp from '../firebase/firebaseConfig';
 
@@ -26,6 +26,24 @@ const Login = ({ onLogin }) => {
       console.error('Error fetching user data:', error);
     }
   };
+
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem('loggedInUser');
+
+    if (storedUser) {
+      onLogin();
+    }
+
+    const handleBeforeUnload = (event) => {
+      sessionStorage.setItem('loggedInUser', storedUser);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [onLogin]);
 
   const handleLogin = async () => {
     try {
