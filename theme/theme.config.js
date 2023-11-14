@@ -8,6 +8,12 @@ export const themeOptions = {
     secondary: {
       main: '#c77309',
     },
+    tertiary: {
+      main: '#882796'
+    },
+    fourth: {
+      main: '#000080'
+    },
     background: {
       default: '#000000',
       paper: '#aa6e39',

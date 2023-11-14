@@ -18,6 +18,7 @@ const FirestoreData = () => {
   const [selectedLeadKirtan, setSelectedLeadKirtan] = useState('');
   const [selectedLeadTabla, setSelectedLeadTabla] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc'); // 'desc' for most recent, 'asc' for oldest
 
   const handleCardClick = (audioPath, trackName, raag, taal, date, type, leadKirtan, leadTabla) => {
     setSelectedAudio(audioPath);
@@ -39,6 +40,18 @@ const FirestoreData = () => {
     setSearchQuery(event.target.value);
   };
 
+  const handleSort = (order) => {
+    setSortOrder(order);
+    const sortedResults = sortData(filteredData, order);
+    setFilteredData(sortedResults);
+  };
+
+  const sortData = (dataToSort, order) => {
+    return dataToSort.sort((a, b) =>
+      order === 'desc' ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date)
+    );
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -51,9 +64,7 @@ const FirestoreData = () => {
           ...doc.data(),
         }));
 
-        const sortedData = fetchedData.sort((a, b) =>
-          a.shabadName.localeCompare(b.shabadName)
-        );
+        const sortedData = sortData(fetchedData, sortOrder);
         setData(sortedData);
         setFilteredData(sortedData);
       } catch (error) {
@@ -62,7 +73,7 @@ const FirestoreData = () => {
     };
 
     fetchData();
-  }, []);
+  }, [sortOrder]);
 
   useEffect(() => {
     const filteredResults = data.filter((item) =>
@@ -70,10 +81,13 @@ const FirestoreData = () => {
       item.raag.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.taal.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.date.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.type.toLowerCase().includes(searchQuery.toLowerCase())
+      item.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.lead_kirtan && item.lead_kirtan.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (item.lead_tabla && item.lead_tabla.toLowerCase().includes(searchQuery.toLowerCase()))
     );
-    setFilteredData(filteredResults);
-  }, [data, searchQuery]);
+    const sortedResults = sortData(filteredResults, sortOrder);
+    setFilteredData(sortedResults);
+  }, [data, searchQuery, sortOrder]);
 
   return (
     <div>
@@ -101,12 +115,30 @@ const FirestoreData = () => {
         }}
       />
 
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+        <Button
+          variant="contained"
+          color="tertiary"
+          onClick={() => handleSort('desc')}
+          sx={{ marginRight: '1rem' }}
+        >
+          Newest
+        </Button>
+        <Button
+          variant="contained"
+          color="fourth"
+          onClick={() => handleSort('asc')}
+        >
+          Oldest
+        </Button>
+      </Box>
+
       <List sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1rem', flexDirection: { sm: "column", md: "column", lg: "column", xl: "column" } }}>
         {filteredData.map((item) => (
           <div key={item.id} style={{ flexBasis: '40%' }}>
           <Card
             onClick={() =>
-              handleCardClick(item.audio_url, item.shabadName, item.raag, item.taal, item.date, item.type)
+              handleCardClick(item.audio_url, item.shabadName, item.raag, item.taal, item.date, item.type, item.leadKirtan, item.leadTabla)
             }
             style={{ 
               cursor: 'pointer',
