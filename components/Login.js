@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import firebaseApp from '../firebase/firebaseConfig';
 
-import { Button, TextField, Typography, Paper, InputLabel } from '@mui/material';
+import { Button, TextField, Typography, Paper, InputLabel, IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const fetchUserData = async () => {
     try {
@@ -25,25 +27,21 @@ const Login = ({ onLogin }) => {
     }
   };
 
-  useEffect(() => {
-    const storedUser = sessionStorage.getItem('loggedInUser');
-
-    if (storedUser) {
-      onLogin();
-    }
-  }, [onLogin]);
-
   const handleLogin = async () => {
     try {
       const userData = await fetchUserData();
-  
+
       if (!userData) {
         console.error('Error fetching user data');
         return;
       }
-  
-      const foundUser = userData.find((user) => user.username === username && user.password === password);
-  
+
+      const foundUser = userData.find(
+        (user) =>
+          user.username.toLowerCase() === username.toLowerCase() &&
+          user.password === password
+      );
+
       if (foundUser) {
         sessionStorage.setItem('loggedInUser', JSON.stringify(foundUser));
         onLogin();
@@ -54,18 +52,17 @@ const Login = ({ onLogin }) => {
       console.error('Error during login:', error);
     }
   };
-  
 
   return (
     <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '90vh',
-      }}>
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '90vh',
+    }}>
       <Paper sx={{ padding: '1rem', maxWidth: '500px', margin: 'auto' }}>
-      <Typography variant="h3" align="center" gutterBottom sx={{ backgroundColor: '#0a3269', padding: '1rem', borderRadius: '0.5rem' }}>
+        <Typography variant="h3" align="center" gutterBottom sx={{ backgroundColor: '#0a3269', padding: '1rem', borderRadius: '0.5rem' }}>
           Basement Wale
         </Typography>
         <Typography variant="h4" align="center" gutterBottom>
@@ -86,7 +83,7 @@ const Login = ({ onLogin }) => {
           <InputLabel htmlFor="password">Password</InputLabel>
           <TextField
             id="password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             variant="outlined"
             fullWidth
             margin="normal"
@@ -94,6 +91,19 @@ const Login = ({ onLogin }) => {
             onChange={(e) => setPassword(e.target.value)}
             inputProps={{ sx: { color: '#0a3269' } }}
             sx={{ backgroundColor: '#fffff7', borderRadius: '0.5rem'}}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    edge="end"
+                    onClick={() => setShowPassword(!showPassword)}
+                    sx={{ color: '#0a3269' }}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <Button
             variant="contained"
