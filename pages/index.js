@@ -1,12 +1,17 @@
 import Head from 'next/head';
 
+import React, { useState } from 'react';
+
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Container from '@mui/material/Container';
 
+import Login from '../components/Login';
 import ShabadCard from '../components/ShabadCard';
 
 export default function Page() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
     <div>
       <Head>
@@ -15,11 +20,18 @@ export default function Page() {
         <link rel="icon" href="khanda.png" sizes="any"/>
       </Head>
       <main>
-        <Typography variant="h2" component="h2" sx={{ padding: '1rem', textAlign: 'center' }}>Basement Wale</Typography>
-        <Typography variant="body1" sx={{ padding: '1rem', textAlign: 'center' }}>Click on a shabad card and press play to listen!</Typography>
-        <Container sx={{ paddingBottom: '15rem' }}>
-            <ShabadCard />
-        </Container>
+      {isLoggedIn ? (
+          <>
+            <Typography variant="h4" sx={{ padding: '1rem', textAlign: 'center', width: '100%', backgroundColor: '#000080' }}>Basement Wale</Typography>
+            <img src='bwj-banner.webp' alt='A Basement Wale Banner' style={{ display: 'block', margin: 'auto', maxWidth: '90%', borderRadius: '1rem', marginTop: '2rem' }}/>
+            <Typography variant="body1" sx={{ padding: '1rem', textAlign: 'center' }}>Click on a shabad card and press play to listen!</Typography>
+            <Container sx={{ paddingBottom: '15rem' }}>
+              <ShabadCard />
+            </Container>
+          </>
+        ) : (
+          <Login onLogin={() => setIsLoggedIn(true)} />
+        )}
       </main>
 
     </div>
