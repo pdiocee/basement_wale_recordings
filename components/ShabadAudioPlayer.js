@@ -46,12 +46,13 @@ const StyledAudioPlayer = styled(AudioPlayer)`
 }
 `;
 
-const ShabadAudioPlayer = ({ audioPath, trackName, raag, taal, date, onPlaybackChange }) => {
+const ShabadAudioPlayer = ({ audioPath, trackName, raag, taal, date, type, onPlaybackChange }) => {
   const [audioUrl, setAudioUrl] = useState('');
   const [currentTrackName, setCurrentTrackName] = useState('');
   const [currentRaag, setCurrentRaag] = useState('');
   const [currentTaal, setCurrentTaal] = useState('');
   const [currentDate, setCurrentDate] = useState('');
+  const [currentType, setCurrentType] = useState('');
   const audioPlayerRef = useRef(null);
   const [isLooping, setIsLooping] = useState(false);
 
@@ -60,7 +61,8 @@ const ShabadAudioPlayer = ({ audioPath, trackName, raag, taal, date, onPlaybackC
     setCurrentRaag(raag);
     setCurrentTaal(taal);
     setCurrentDate(date);
-  }, [trackName, raag, taal, date]);
+    setCurrentType(type)
+  }, [trackName, raag, taal, date, type]);
 
   useEffect(() => {
     const loadAudio = async () => {
@@ -132,6 +134,9 @@ const ShabadAudioPlayer = ({ audioPath, trackName, raag, taal, date, onPlaybackC
           </Typography>
           <Typography key="date" variant="body1" color="white">
             {currentDate}
+          </Typography>
+          <Typography key="date" variant="body1" color="pink">
+            {currentType}
           </Typography>
           <Button
             key="loop"

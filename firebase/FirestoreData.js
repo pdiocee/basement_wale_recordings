@@ -14,14 +14,20 @@ const FirestoreData = () => {
   const [selectedRaag, setSelectedRaag] = useState('');
   const [selectedTaal, setSelectedTaal] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedLeadKirtan, setSelectedLeadKirtan] = useState('');
+  const [selectedLeadTabla, setSelectedLeadTabla] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleCardClick = (audioPath, trackName, raag, taal, date) => {
+  const handleCardClick = (audioPath, trackName, raag, taal, date, type, leadKirtan, leadTabla) => {
     setSelectedAudio(audioPath);
     setSelectedTrackName(trackName);
     setSelectedRaag(raag);
     setSelectedTaal(taal);
     setSelectedDate(date);
+    setSelectedType(type);
+    setSelectedLeadKirtan(leadKirtan);
+    setSelectedLeadTabla(leadTabla);
     setIsPlaying(true);
   };
 
@@ -63,7 +69,8 @@ const FirestoreData = () => {
       item.shabadName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.raag.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.taal.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.date.toLowerCase().includes(searchQuery.toLowerCase())
+      item.date.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.type.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredData(filteredResults);
   }, [data, searchQuery]);
@@ -71,7 +78,7 @@ const FirestoreData = () => {
   return (
     <div>
       <TextField
-        label="Search Shabad, Raag, Taal, or Date"
+        label="Search Shabad, Raag, Taal, Date, or Performance Type"
         variant="filled"
         value={searchQuery}
         onChange={handleSearchChange}
@@ -99,9 +106,12 @@ const FirestoreData = () => {
           <div key={item.id} style={{ flexBasis: '40%' }}>
           <Card
             onClick={() =>
-              handleCardClick(item.audio_url, item.shabadName, item.raag, item.taal, item.date)
+              handleCardClick(item.audio_url, item.shabadName, item.raag, item.taal, item.date, item.type)
             }
-            style={{ cursor: 'pointer' }}
+            style={{ 
+              cursor: 'pointer',
+              backgroundColor: item.type === 'Stage' ? '#3F5794' : '#aa6e39',
+            }}
             sx={{ margin: '1rem', }}
           >
             <CardContent>
@@ -118,6 +128,14 @@ const FirestoreData = () => {
                     <Button sx={{ margin: '0.5rem' }} variant="contained" color="success">
                       {item.date}
                     </Button>
+                    <Button sx={{ margin: '0.5rem' }} variant="contained" color="info">
+                      {item.type}
+                    </Button>
+                    {item.lead_kirtan && (
+                    <Button sx={{ margin: '0.5rem' }} variant="contained" color="error">
+                      {item.lead_kirtan} & {item.lead_tabla}
+                    </Button>
+                    )}
                   </Container>
                 </Box>
               </Box>
@@ -133,6 +151,7 @@ const FirestoreData = () => {
           raag={selectedRaag}
           taal={selectedTaal}
           date={selectedDate}
+          type={selectedType}
           playbackState={isPlaying ? 'play' : 'pause'}
           onPlaybackChange={handlePlaybackChange}
         />
