@@ -135,7 +135,7 @@ const ShabadAudioPlayer = ({ audioPath, trackName, raag, taal, date, type, onPla
           <Typography key="date" variant="body1" color="white">
             {currentDate}
           </Typography>
-          <Typography key="date" variant="body1" color="pink">
+          <Typography key="type" variant="body1" color="pink">
             {currentType}
           </Typography>
           <Button

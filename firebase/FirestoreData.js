@@ -135,7 +135,7 @@ const FirestoreData = () => {
 
       <List sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1rem', flexDirection: { sm: "column", md: "column", lg: "column", xl: "column" } }}>
         {filteredData.map((item) => (
-          <div key={item.id} style={{ flexBasis: '40%' }}>
+          <div key={`${item.id}-${item.date}`} style={{ flexBasis: '40%' }}>
           <Card
             onClick={() =>
               handleCardClick(item.audio_url, item.shabadName, item.raag, item.taal, item.date, item.type, item.leadKirtan, item.leadTabla)

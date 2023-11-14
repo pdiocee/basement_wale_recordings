@@ -91,6 +91,7 @@ const Login = ({ onLogin }) => {
           <TextField
             id="username"
             variant="outlined"
+            autoComplete="username"
             fullWidth
             margin="normal"
             value={username}
@@ -103,6 +104,7 @@ const Login = ({ onLogin }) => {
             id="password"
             type={showPassword ? 'text' : 'password'}
             variant="outlined"
+            autoComplete="current-password"
             fullWidth
             margin="normal"
             value={password}
