@@ -80,6 +80,8 @@ const Login = ({ onLogin }) => {
             margin="normal"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            inputProps={{ sx: { color: '#0a3269' } }}
+            sx={{ backgroundColor: '#fffff7', borderRadius: '0.5rem'}}
           />
           <InputLabel htmlFor="password">Password</InputLabel>
           <TextField
@@ -90,6 +92,8 @@ const Login = ({ onLogin }) => {
             margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            inputProps={{ sx: { color: '#0a3269' } }}
+            sx={{ backgroundColor: '#fffff7', borderRadius: '0.5rem'}}
           />
           <Button
             variant="contained"

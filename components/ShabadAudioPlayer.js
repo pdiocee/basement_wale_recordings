@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 
 const StyledAudioPlayer = styled(AudioPlayer)`
 && {
@@ -52,6 +53,7 @@ const ShabadAudioPlayer = ({ audioPath, trackName, raag, taal, date, onPlaybackC
   const [currentTaal, setCurrentTaal] = useState('');
   const [currentDate, setCurrentDate] = useState('');
   const audioPlayerRef = useRef(null);
+  const [isLooping, setIsLooping] = useState(false);
 
   useEffect(() => {
     setCurrentTrackName(trackName);
@@ -117,6 +119,7 @@ const ShabadAudioPlayer = ({ audioPath, trackName, raag, taal, date, onPlaybackC
         'ADDITIONAL_CONTROLS',
       ]}
       customAdditionalControls={[
+        
         <Box sx={{ textAlign: 'center' }}>
           <Typography key="track-name" className="track-name" variant="body2" color="primary">
             {currentTrackName}
@@ -130,6 +133,29 @@ const ShabadAudioPlayer = ({ audioPath, trackName, raag, taal, date, onPlaybackC
           <Typography key="date" variant="body1" color="white">
             {currentDate}
           </Typography>
+          <Button
+            key="loop"
+            sx={{
+              margin: '0.5rem',
+              color: isLooping ? '#000' : '#fff',
+              backgroundColor: isLooping ? '#fff' : 'transparent',
+              border: isLooping ? 'none' : '1px solid #c77309',
+              borderRadius: '0.5rem',
+              '&:hover': {
+                color: isLooping ? '#fff' : '#000',
+                backgroundColor: isLooping ? 'transparent' : '#fff',
+              },
+            }}
+            onClick={() => {
+              if (audioPlayerRef.current) {
+                const audioElement = audioPlayerRef.current.audio.current;
+                audioElement.loop = !audioElement.loop;
+                setIsLooping(audioElement.loop);
+              }
+            }}
+          >
+            Loop
+          </Button>
         </Box>
       ]}
     />

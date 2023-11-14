@@ -22,9 +22,9 @@ export default function Page() {
       <main>
       {isLoggedIn ? (
           <>
-            <Typography variant="h4" sx={{ padding: '1rem', textAlign: 'center', width: '100%', backgroundColor: '#000080' }}>Basement Wale</Typography>
             <img src='bwj-banner.webp' alt='A Basement Wale Banner' style={{ display: 'block', margin: 'auto', maxWidth: '90%', borderRadius: '1rem', marginTop: '2rem' }}/>
-            <Typography variant="body1" sx={{ padding: '1rem', textAlign: 'center' }}>Click on a shabad card and press play to listen!</Typography>
+            <Typography variant="h4" sx={{ padding: '1rem', textAlign: 'center', }}>Welcome to the Basement&nbsp;Wale Database</Typography>
+            <Typography variant="body1" sx={{ padding: '0 1rem 1rem 1rem', textAlign: 'center' }}>Click on a shabad card and press&nbsp;play&nbsp;to&nbsp;listen!</Typography>
             <Container sx={{ paddingBottom: '15rem' }}>
               <ShabadCard />
             </Container>
