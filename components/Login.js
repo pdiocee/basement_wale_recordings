@@ -79,7 +79,7 @@ const Login = ({ onLogin }) => {
       justifyContent: 'center',
       minHeight: '90vh',
     }}>
-      <Paper sx={{ padding: '1rem', maxWidth: '500px', margin: 'auto' }}>
+      <Paper sx={{ padding: '1rem', maxWidth: '500px', margin: 'auto', margin: '1rem' }}>
         <Typography variant="h3" align="center" gutterBottom sx={{ backgroundColor: '#0a3269', padding: '1rem', borderRadius: '0.5rem' }}>
           Basement Wale
         </Typography>
