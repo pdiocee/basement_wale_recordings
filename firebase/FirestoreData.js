@@ -3,6 +3,7 @@ import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import ShabadAudioPlayer from '../components/ShabadAudioPlayer';
 import firebaseApp from './firebaseConfig';
 
+import NavigationIcon from '@mui/icons-material/Navigation';
 import {
   Card,
   CardContent,
@@ -94,7 +95,10 @@ const FirestoreData = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage, event) => {
+    if (event) {
+      event.preventDefault();
+    }
     setCurrentPage(newPage);
   };
 
@@ -137,6 +141,21 @@ const FirestoreData = () => {
   }, [data, searchQuery, sortOrder]);
 
   const paginatedData = getPaginatedData();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollToTopButton = document.getElementById('scrollToTopButton');
+      if (scrollToTopButton) {
+        scrollToTopButton.style.display = window.scrollY > 100 ? 'block' : 'none';
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const handleScrollToTop = () => {
     window.scrollTo({
@@ -225,6 +244,27 @@ const FirestoreData = () => {
           </Select>
         </MenuItem>
       </Menu>
+      <Box
+        id="scrollToTopButton"
+        onClick={handleScrollToTop}
+        sx={{
+          display: 'none',
+          position: 'fixed',
+          zIndex: 1000,
+          bottom: '2rem',
+          right: '2rem',
+          backgroundColor: '#c77309',
+          color: 'white',
+          borderRadius: '50%',
+          padding: '1rem',
+          cursor: 'pointer',
+          '&:hover': {
+            backgroundColor: '#0a3269',
+          },
+        }}
+      >
+        <NavigationIcon />
+      </Box>
       <List sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1rem', flexDirection: { sm: "column", md: "column", lg: "column", xl: "column" } }}>
         {paginatedData.map((item) => (
           <div key={`${item.id}-${item.date}`} style={{ flexBasis: '40%' }}>
@@ -282,21 +322,28 @@ const FirestoreData = () => {
 
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
         {[...Array(getPageCount()).keys()].map((page) => (
-          <Button
+          <Typography
             key={page}
             onClick={() => handlePageChange(page + 1)}
-            variant={currentPage === page + 1 ? 'contained' : 'outlined'}
+            variant="body1"
             sx={{
               margin: '0.5rem',
               backgroundColor: currentPage === page + 1 ? '#0a3269' : 'transparent',
               color: currentPage === page + 1 ? 'white' : 'white',
+              border: '1px solid',
+              borderColor: '#0a3269',
+              borderRadius: '4px',
+              padding: '6px 16px',
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: currentPage === page + 1 ? '#0a3269' : '#c77309',
+              },
             }}
           >
             {page + 1}
-          </Button>
+          </Typography>
         ))}
       </Box>
-
       {selectedAudio && (
         <ShabadAudioPlayer
           audioPath={selectedAudio}
