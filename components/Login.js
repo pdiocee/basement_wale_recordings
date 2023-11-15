@@ -28,22 +28,48 @@ const Login = ({ onLogin }) => {
   };
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem('loggedInUser');
+  const storedUser = sessionStorage.getItem('loggedInUser');
 
+  const handleBeforeUnload = async (event) => {
     if (storedUser) {
-      onLogin();
+      await sessionStorage.setItem('loggedInUser', storedUser);
     }
+  };
 
-    const handleBeforeUnload = (event) => {
-      sessionStorage.setItem('loggedInUser', storedUser);
-    };
+  window.addEventListener('beforeunload', handleBeforeUnload);
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+  const tryAutoLogin = async () => {
+    try {
+      const userData = await fetchUserData();
 
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [onLogin]);
+      if (!userData) {
+        console.error('Error fetching user data');
+        return;
+      }
+
+      const storedUserObject = JSON.parse(storedUser);
+      const foundUser = userData.find(
+        (user) =>
+          user.username.toLowerCase() === storedUserObject.username.toLowerCase() &&
+          user.password === storedUserObject.password
+      );
+
+      if (foundUser) {
+        onLogin();
+      }
+    } catch (error) {
+      console.error('Error during auto-login:', error);
+    }
+  };
+
+  if (storedUser) {
+    tryAutoLogin();
+  }
+
+  return () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+  };
+}, [onLogin]);
 
   const handleLogin = async () => {
     try {
