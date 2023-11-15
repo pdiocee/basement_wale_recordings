@@ -253,17 +253,17 @@ const FirestoreData = () => {
           zIndex: 1000,
           bottom: '2rem',
           right: '2rem',
-          backgroundColor: '#c77309',
+          backgroundColor: '#0a3269',
           color: 'white',
           borderRadius: '50%',
-          padding: '1rem',
+          padding: '0.5rem',
           cursor: 'pointer',
           '&:hover': {
-            backgroundColor: '#0a3269',
+            backgroundColor: '#c77309',
           },
         }}
       >
-        <NavigationIcon />
+        <NavigationIcon fontSize="large" />
       </Box>
       <List sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1rem', flexDirection: { sm: "column", md: "column", lg: "column", xl: "column" } }}>
         {paginatedData.map((item) => (
