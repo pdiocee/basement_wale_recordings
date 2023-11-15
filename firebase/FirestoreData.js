@@ -286,7 +286,11 @@ const FirestoreData = () => {
             key={page}
             onClick={() => handlePageChange(page + 1)}
             variant={currentPage === page + 1 ? 'contained' : 'outlined'}
-            sx={{ margin: '0.5rem' }}
+            sx={{
+              margin: '0.5rem',
+              backgroundColor: currentPage === page + 1 ? '#0a3269' : 'transparent',
+              color: currentPage === page + 1 ? 'white' : 'white',
+            }}
           >
             {page + 1}
           </Button>
