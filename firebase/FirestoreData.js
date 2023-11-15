@@ -176,7 +176,7 @@ const FirestoreData = () => {
             onClick={handleFilterIconClick}
             sx={{
               color: '#0a3269',
-              backgroundColor: '#882796',
+              backgroundColor: '#c77309',
               borderRadius: '0 0.5rem 0.5rem 0',
               padding: '0.6417rem',
               '&:hover': {
