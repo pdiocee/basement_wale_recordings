@@ -2,13 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import firebaseApp from '../firebase/firebaseConfig';
 
-import { Button, TextField, Typography, Paper, InputLabel, IconButton, InputAdornment } from '@mui/material';
+import {
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  InputLabel,
+  IconButton,
+  InputAdornment,
+  CircularProgress,
+} from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchUserData = async () => {
     try {
@@ -28,48 +38,52 @@ const Login = ({ onLogin }) => {
   };
 
   useEffect(() => {
-  const storedUser = sessionStorage.getItem('loggedInUser');
+    const storedUser = sessionStorage.getItem('loggedInUser');
 
-  const handleBeforeUnload = async (event) => {
+    const handleBeforeUnload = async () => {
+      if (storedUser) {
+        await sessionStorage.setItem('loggedInUser', storedUser);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    const tryAutoLogin = async () => {
+      try {
+        const userData = await fetchUserData();
+
+        if (!userData) {
+          console.error('Error fetching user data');
+          return;
+        }
+
+        const storedUserObject = JSON.parse(storedUser);
+        const foundUser = userData.find(
+          (user) =>
+            user.username.toLowerCase() === storedUserObject.username.toLowerCase() &&
+            user.password === storedUserObject.password
+        );
+
+        if (foundUser) {
+          onLogin();
+        }
+      } catch (error) {
+        console.error('Error during auto-login:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (storedUser) {
-      await sessionStorage.setItem('loggedInUser', storedUser);
+      tryAutoLogin();
+    } else {
+      setLoading(false);
     }
-  };
 
-  window.addEventListener('beforeunload', handleBeforeUnload);
-
-  const tryAutoLogin = async () => {
-    try {
-      const userData = await fetchUserData();
-
-      if (!userData) {
-        console.error('Error fetching user data');
-        return;
-      }
-
-      const storedUserObject = JSON.parse(storedUser);
-      const foundUser = userData.find(
-        (user) =>
-          user.username.toLowerCase() === storedUserObject.username.toLowerCase() &&
-          user.password === storedUserObject.password
-      );
-
-      if (foundUser) {
-        onLogin();
-      }
-    } catch (error) {
-      console.error('Error during auto-login:', error);
-    }
-  };
-
-  if (storedUser) {
-    tryAutoLogin();
-  }
-
-  return () => {
-    window.removeEventListener('beforeunload', handleBeforeUnload);
-  };
-}, [onLogin]);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [onLogin]);
 
   const handleLogin = async () => {
     try {
@@ -98,70 +112,81 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '90vh',
-    }}>
-      <Paper sx={{ padding: '1rem', maxWidth: '500px', margin: 'auto', margin: '1rem' }}>
-        <Typography variant="h3" align="center" gutterBottom sx={{ backgroundColor: '#0a3269', padding: '1rem', borderRadius: '0.5rem' }}>
-          Basement Wale
-        </Typography>
-        <Typography variant="h4" align="center" gutterBottom>
-          Login
-        </Typography>
-        <form>
-          <InputLabel htmlFor="username">Username</InputLabel>
-          <TextField
-            id="username"
-            variant="outlined"
-            autoComplete="username"
-            fullWidth
-            margin="normal"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            inputProps={{ sx: { color: '#0a3269' } }}
-            sx={{ backgroundColor: '#fffff7', borderRadius: '0.5rem'}}
-          />
-          <InputLabel htmlFor="password">Password</InputLabel>
-          <TextField
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            variant="outlined"
-            autoComplete="current-password"
-            fullWidth
-            margin="normal"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            inputProps={{ sx: { color: '#0a3269' } }}
-            sx={{ backgroundColor: '#fffff7', borderRadius: '0.5rem'}}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    edge="end"
-                    onClick={() => setShowPassword(!showPassword)}
-                    sx={{ color: '#0a3269' }}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleLogin}
-            style={{ marginTop: '1rem' }}
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '90vh',
+      }}
+    >
+      {loading ? (
+        <CircularProgress size={48} />
+      ) : (
+        <Paper sx={{ padding: '1rem', maxWidth: '500px', margin: 'auto', margin: '1rem' }}>
+          <Typography
+            variant="h3"
+            align="center"
+            gutterBottom
+            sx={{ backgroundColor: '#0a3269', padding: '1rem', borderRadius: '0.5rem' }}
           >
+            Basement Wale
+          </Typography>
+          <Typography variant="h4" align="center" gutterBottom>
             Login
-          </Button>
-        </form>
-      </Paper>
+          </Typography>
+          <form>
+            <InputLabel htmlFor="username">Username</InputLabel>
+            <TextField
+              id="username"
+              variant="outlined"
+              autoComplete="username"
+              fullWidth
+              margin="normal"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              inputProps={{ sx: { color: '#0a3269' } }}
+              sx={{ backgroundColor: '#fffff7', borderRadius: '0.5rem' }}
+            />
+            <InputLabel htmlFor="password">Password</InputLabel>
+            <TextField
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              variant="outlined"
+              autoComplete="current-password"
+              fullWidth
+              margin="normal"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              inputProps={{ sx: { color: '#0a3269' } }}
+              sx={{ backgroundColor: '#fffff7', borderRadius: '0.5rem' }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      edge="end"
+                      onClick={() => setShowPassword(!showPassword)}
+                      sx={{ color: '#0a3269' }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleLogin}
+              style={{ marginTop: '1rem' }}
+            >
+              Login
+            </Button>
+          </form>
+        </Paper>
+      )}
     </div>
   );
 };
