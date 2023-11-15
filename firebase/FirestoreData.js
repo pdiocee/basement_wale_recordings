@@ -3,7 +3,23 @@ import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import ShabadAudioPlayer from '../components/ShabadAudioPlayer';
 import firebaseApp from './firebaseConfig';
 
-import { Card, CardContent, Typography, List, Button, Container, Box, TextField, ButtonBase } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  Typography,
+  List,
+  Button,
+  Container,
+  Box,
+  TextField,
+  ButtonBase,
+  MenuItem,
+  Select,
+  Menu,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
+import { FilterList } from '@mui/icons-material';
 
 const FirestoreData = () => {
   const [data, setData] = useState([]);
@@ -18,7 +34,17 @@ const FirestoreData = () => {
   const [selectedLeadKirtan, setSelectedLeadKirtan] = useState('');
   const [selectedLeadTabla, setSelectedLeadTabla] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('desc'); // 'desc' for most recent, 'asc' for oldest
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [pageSize, setPageSize] = useState(10);
+  const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
+
+  const handleFilterIconClick = (event) => {
+    setFilterMenuAnchor(event.currentTarget);
+  };
+
+  const handleFilterMenuClose = () => {
+    setFilterMenuAnchor(null);
+  };
 
   const handleCardClick = (audioPath, trackName, raag, taal, date, type, leadKirtan, leadTabla) => {
     setSelectedAudio(audioPath);
@@ -50,6 +76,26 @@ const FirestoreData = () => {
     return dataToSort.sort((a, b) =>
       order === 'desc' ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date)
     );
+  };
+
+  const handlePageSizeChange = (event) => {
+    setPageSize(event.target.value);
+  };
+
+  const getPageCount = () => {
+    return Math.ceil(filteredData.length / pageSize);
+  };
+
+  const getPaginatedData = () => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredData.slice(startIndex, endIndex);
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
   };
 
   useEffect(() => {
@@ -87,95 +133,166 @@ const FirestoreData = () => {
     );
     const sortedResults = sortData(filteredResults, sortOrder);
     setFilteredData(sortedResults);
+    setCurrentPage(1);
   }, [data, searchQuery, sortOrder]);
+
+  const paginatedData = getPaginatedData();
+
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <div>
-      <TextField
-        label="Search Shabad, Raag, Taal, Date, or Performance Type"
-        variant="filled"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        fullWidth
-        sx={{
-          marginBottom: '1rem',
-          background: '#f2f2f2',
-          borderRadius: '0.5rem',
-          '& input': {
-            color: '#0a3269',
-          },
-          "& label.Mui-focused": {
-            color: "#0a3269",
-          },
-          "& .MuiOutlinedInput-root": {
-            "&.Mui-focused fieldset": {
-              borderColor: "#0a3269",
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'start' }}>
+        <TextField
+          label="Search..."
+          variant="filled"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          fullWidth
+          sx={{
+            marginBottom: '1rem',
+            background: '#f2f2f2',
+            borderRadius: '0.5rem 0 0 0.5rem',
+            '& input': {
+              color: '#0a3269',
             },
+            "& label.Mui-focused": {
+              color: "#0a3269",
+            },
+            "& .MuiOutlinedInput-root": {
+              "&.Mui-focused fieldset": {
+                borderColor: "#0a3269",
+              },
+            },
+          }}
+        />
+        <Tooltip title="Filter">
+          <IconButton
+            onClick={handleFilterIconClick}
+            sx={{
+              color: '#0a3269',
+              backgroundColor: '#882796',
+              borderRadius: '0 0.5rem 0.5rem 0',
+              padding: '0.6417rem',
+              '&:hover': {
+                backgroundColor: '#0a3269',
+              },
+              '&:active': {
+                backgroundColor: '#0a3269',
+              },
+            }}
+          >
+            <FilterList fontSize="large" sx={{ color: 'white' }} />
+          </IconButton>
+        </Tooltip>
+      </Box>
+      <Menu
+        anchorEl={filterMenuAnchor}
+        open={Boolean(filterMenuAnchor)}
+        onClose={handleFilterMenuClose}
+        PaperProps={{
+          sx: {
+            backgroundColor: '#0a3269',
           },
         }}
-      />
-
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-        <Button
-          variant="contained"
-          color="tertiary"
-          onClick={() => handleSort('desc')}
-          sx={{ marginRight: '1rem' }}
-        >
-          Newest
-        </Button>
-        <Button
-          variant="contained"
-          color="fourth"
-          onClick={() => handleSort('asc')}
-        >
-          Oldest
-        </Button>
-      </Box>
-
-      <List sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1rem', flexDirection: { sm: "column", md: "column", lg: "column", xl: "column" } }}>
-        {filteredData.map((item) => (
-          <div key={`${item.id}-${item.date}`} style={{ flexBasis: '40%' }}>
-          <Card
-            onClick={() =>
-              handleCardClick(item.audio_url, item.shabadName, item.raag, item.taal, item.date, item.type, item.leadKirtan, item.leadTabla)
-            }
-            style={{ 
-              cursor: 'pointer',
-              backgroundColor: item.type === 'Stage' ? '#3F5794' : '#aa6e39',
+      >
+        <MenuItem sx={{ backgroundColor: '#0a3269', marginTop: '0.5rem', '&:hover': {backgroundColor: '#c77309',}, }} onClick={() => handleSort('desc')}>Newest</MenuItem>
+        <MenuItem sx={{ backgroundColor: '#0a3269', marginTop: '0.5rem', '&:hover': {backgroundColor: '#c77309',}, }} onClick={() => handleSort('asc')}>Oldest</MenuItem>
+        <MenuItem sx={{ marginTop: '0.5rem' }}>
+          <Typography variant="body1" sx={{ marginRight: '1rem' }}>
+            Display:
+          </Typography>
+          <Select
+            value={pageSize}
+            onChange={handlePageSizeChange}
+            sx={{
+              backgroundColor: '#c77309',
+              borderRadius: '0.5rem',
+              '&:focus': {
+                backgroundColor: '#c77309',
+              },
             }}
-            sx={{ margin: '1rem', }}
           >
-            <CardContent>
-              <Box>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={25}>25</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={filteredData.length}>All</MenuItem>
+          </Select>
+        </MenuItem>
+      </Menu>
+      <List sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1rem', flexDirection: { sm: "column", md: "column", lg: "column", xl: "column" } }}>
+        {paginatedData.map((item) => (
+          <div key={`${item.id}-${item.date}`} style={{ flexBasis: '40%' }}>
+            <Card
+              onClick={() =>
+                handleCardClick(
+                  item.audio_url,
+                  item.shabadName,
+                  item.raag,
+                  item.taal,
+                  item.date,
+                  item.type,
+                  item.leadKirtan,
+                  item.leadTabla
+                )
+              }
+              style={{
+                cursor: 'pointer',
+                backgroundColor: item.type === 'Stage' ? '#3F5794' : '#aa6e39',
+              }}
+              sx={{ margin: '1rem', }}
+            >
+              <CardContent>
                 <Box>
-                  <Typography sx={{ paddingBottom: '1rem', textAlign: 'center' }} variant="h5">
-                    {item.shabadName}
-                  </Typography>
-                  <Container sx={{ textAlign: 'center' }}>
-                    <Button sx={{ margin: '0.5rem' }} variant="contained">{item.raag}</Button>
-                    <Button sx={{ margin: '0.5rem' }} variant="contained" color="secondary">
-                      {item.taal}
-                    </Button>
-                    <Button sx={{ margin: '0.5rem' }} variant="contained" color="success">
-                      {item.date}
-                    </Button>
-                    <Button sx={{ margin: '0.5rem' }} variant="contained" color="info">
-                      {item.type}
-                    </Button>
-                    {item.lead_kirtan && (
-                    <Button sx={{ margin: '0.5rem' }} variant="contained" color="error">
-                      {item.lead_kirtan} & {item.lead_tabla}
-                    </Button>
-                    )}
-                  </Container>
+                  <Box>
+                    <Typography sx={{ paddingBottom: '1rem', textAlign: 'center' }} variant="h5">
+                      {item.shabadName}
+                    </Typography>
+                    <Container sx={{ textAlign: 'center' }}>
+                      <Button sx={{ margin: '0.5rem' }} variant="contained">
+                        {item.raag}
+                      </Button>
+                      <Button sx={{ margin: '0.5rem' }} variant="contained" color="secondary">
+                        {item.taal}
+                      </Button>
+                      <Button sx={{ margin: '0.5rem' }} variant="contained" color="success">
+                        {item.date}
+                      </Button>
+                      <Button sx={{ margin: '0.5rem' }} variant="contained" color="info">
+                        {item.type}
+                      </Button>
+                      {item.lead_kirtan && (
+                        <Button sx={{ margin: '0.5rem' }} variant="contained" color="error">
+                          {item.lead_kirtan} & {item.lead_tabla}
+                        </Button>
+                      )}
+                    </Container>
+                  </Box>
                 </Box>
-              </Box>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
           </div>
         ))}
       </List>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+        {[...Array(getPageCount()).keys()].map((page) => (
+          <Button
+            key={page}
+            onClick={() => handlePageChange(page + 1)}
+            variant={currentPage === page + 1 ? 'contained' : 'outlined'}
+            sx={{ margin: '0.5rem' }}
+          >
+            {page + 1}
+          </Button>
+        ))}
+      </Box>
+
       {selectedAudio && (
         <ShabadAudioPlayer
           audioPath={selectedAudio}
