@@ -4,6 +4,9 @@ import ShabadAudioPlayer from '../components/ShabadAudioPlayer';
 import firebaseApp from './firebaseConfig';
 
 import NavigationIcon from '@mui/icons-material/Navigation';
+import ClearIcon from '@mui/icons-material/Clear';
+import { FilterList } from '@mui/icons-material';
+
 import {
   Card,
   CardContent,
@@ -20,7 +23,7 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
-import { FilterList } from '@mui/icons-material';
+
 
 const FirestoreData = () => {
   const [data, setData] = useState([]);
@@ -67,10 +70,24 @@ const FirestoreData = () => {
     setSearchQuery(event.target.value);
   };
 
+  const handleSortAlphabetically = () => {
+    const sortedResults = sortDataAlphabetically(filteredData);
+    setFilteredData(sortedResults);
+    setCurrentPage(1);
+    setFilterMenuAnchor(null);
+  };
+  
+  const sortDataAlphabetically = (dataToSort) => {
+    return dataToSort.sort((a, b) =>
+      a.shabadName.localeCompare(b.shabadName)
+    );
+  };
+
   const handleSort = (order) => {
     setSortOrder(order);
     const sortedResults = sortData(filteredData, order);
     setFilteredData(sortedResults);
+    setFilterMenuAnchor(null);
   };
 
   const sortData = (dataToSort, order) => {
@@ -100,6 +117,10 @@ const FirestoreData = () => {
       event.preventDefault();
     }
     setCurrentPage(newPage);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
   };
 
   useEffect(() => {
@@ -190,6 +211,27 @@ const FirestoreData = () => {
             },
           }}
         />
+        {searchQuery && (
+          <Tooltip title="Clear Search">
+            <IconButton
+              onClick={handleClearSearch}
+              sx={{
+                color: '#000000',
+                backgroundColor: '#0a3269',
+                padding: '0.64162rem',
+                borderRadius: '0',
+                '&:hover': {
+                  backgroundColor: '#0a3269',
+                },
+                '&:active': {
+                  backgroundColor: '#0a3269',
+                },
+              }}
+            >
+              <ClearIcon fontSize="large" sx={{ color: '#f2f2f2' }} />
+            </IconButton>
+          </Tooltip>
+        )}
         <Tooltip title="Filter">
           <IconButton
             onClick={handleFilterIconClick}
@@ -222,6 +264,7 @@ const FirestoreData = () => {
       >
         <MenuItem sx={{ backgroundColor: '#0a3269', marginTop: '0.5rem', '&:hover': {backgroundColor: '#c77309',}, }} onClick={() => handleSort('desc')}>Newest</MenuItem>
         <MenuItem sx={{ backgroundColor: '#0a3269', marginTop: '0.5rem', '&:hover': {backgroundColor: '#c77309',}, }} onClick={() => handleSort('asc')}>Oldest</MenuItem>
+        <MenuItem sx={{ backgroundColor: '#0a3269', marginTop: '0.5rem', '&:hover': {backgroundColor: '#c77309',}, }} onClick={() => handleSortAlphabetically()}>A - Z</MenuItem>
         <MenuItem sx={{ marginTop: '0.5rem' }}>
           <Typography variant="body1" sx={{ marginRight: '1rem' }}>
             Display:
@@ -244,6 +287,7 @@ const FirestoreData = () => {
           </Select>
         </MenuItem>
       </Menu>
+
       <Box
         id="scrollToTopButton"
         onClick={handleScrollToTop}
