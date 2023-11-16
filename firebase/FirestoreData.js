@@ -97,7 +97,11 @@ const FirestoreData = () => {
   };
 
   const handlePageSizeChange = (event) => {
-    setPageSize(event.target.value);
+    const newSize = event.target.value;
+    setPageSize(newSize);
+  
+    const newPage = Math.min(currentPage, Math.ceil(filteredData.length / newSize));
+    setCurrentPage(newPage);
   };
 
   const getPageCount = () => {
