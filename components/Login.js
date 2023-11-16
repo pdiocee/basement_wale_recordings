@@ -180,7 +180,7 @@ const Login = ({ onLogin }) => {
               color="primary"
               fullWidth
               onClick={handleLogin}
-              style={{ marginTop: '1rem' }}
+              style={{ marginTop: '1rem', padding: '1rem 0' }}
             >
               Login
             </Button>
