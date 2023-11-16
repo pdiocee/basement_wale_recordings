@@ -27,7 +27,6 @@ export default function Page() {
               <img src='bwj-banner.webp' alt='A Basement Wale Banner' href='/' style={{ display: 'block', margin: 'auto', maxWidth: '90%', borderRadius: '1rem', marginTop: '2rem' }}/>
             </Link>
             <Typography variant="h4" sx={{ padding: '1rem', textAlign: 'center', }}>Welcome to the Basement&nbsp;Wale Database</Typography>
-            <Typography variant="body1" sx={{ padding: '0 1rem 1rem 1rem', textAlign: 'center' }}>Click on a shabad card and press&nbsp;play&nbsp;to&nbsp;listen!</Typography>
             <Container sx={{ paddingBottom: '20rem' }}>
               <ShabadCard />
             </Container>

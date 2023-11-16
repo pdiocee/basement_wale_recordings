@@ -41,6 +41,7 @@ const FirestoreData = () => {
   const [sortOrder, setSortOrder] = useState('desc');
   const [pageSize, setPageSize] = useState(10);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const handleFilterIconClick = (event) => {
     setFilterMenuAnchor(event.currentTarget);
@@ -142,6 +143,7 @@ const FirestoreData = () => {
         const sortedData = sortData(fetchedData, sortOrder);
         setData(sortedData);
         setFilteredData(sortedData);
+        setTotalRecords(sortedData.length);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -191,6 +193,7 @@ const FirestoreData = () => {
 
   return (
     <div>
+      <Typography variant="body1" sx={{ padding: '0 1rem 1rem 1rem', textAlign: 'center' }}>Click on a shabad card and press&nbsp;play&nbsp;to&nbsp;listen! Our database currently has <span style={{ fontWeight: 'bold', color: '#c77309' }}>{totalRecords}</span> recordings.</Typography>
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'start' }}>
         <TextField
           label="Search..."
