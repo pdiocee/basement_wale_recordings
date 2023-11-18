@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import ShabadAudioPlayer from '../components/ShabadAudioPlayer';
 import firebaseApp from './firebaseConfig';
@@ -126,7 +126,10 @@ const FirestoreData = () => {
 
   const handleClearSearch = () => {
     setSearchQuery('');
+    inputRef.current.focus();
   };
+
+  const inputRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -201,6 +204,7 @@ const FirestoreData = () => {
           value={searchQuery}
           onChange={handleSearchChange}
           fullWidth
+          inputRef={inputRef}
           sx={{
             marginBottom: '1rem',
             background: '#f2f2f2',
