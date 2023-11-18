@@ -124,6 +124,30 @@ const FirestoreData = () => {
     setCurrentPage(newPage);
   };
 
+  const MAX_PAGE_LINKS = 5;
+  
+  const getPageLinks = () => {
+    const pageCount = getPageCount();
+    const currentPageIndex = currentPage - 1;
+
+    if (pageCount <= MAX_PAGE_LINKS) {
+      return Array.from({ length: pageCount }, (_, i) => i + 1);
+    }
+
+    const middlePageIndex = Math.floor(MAX_PAGE_LINKS / 2);
+
+    let firstPage = Math.max(1, currentPage - middlePageIndex);
+    let lastPage = Math.min(pageCount, currentPage + (MAX_PAGE_LINKS - middlePageIndex - 1));
+
+    if (lastPage === pageCount && firstPage > 1) {
+      firstPage = Math.max(1, lastPage - (MAX_PAGE_LINKS - 1));
+    } else if (firstPage === 1 && lastPage < pageCount) {
+      lastPage = Math.min(pageCount, firstPage + (MAX_PAGE_LINKS - 1));
+    }
+
+    return Array.from({ length: lastPage - firstPage + 1 }, (_, i) => firstPage + i);
+  };
+
   const handleClearSearch = () => {
     setSearchQuery('');
     inputRef.current.focus();
@@ -376,26 +400,26 @@ const FirestoreData = () => {
       </List>
 
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-        {[...Array(getPageCount()).keys()].map((page) => (
+        {getPageLinks().map((page) => (
           <Typography
             key={page}
-            onClick={() => handlePageChange(page + 1)}
+            onClick={() => handlePageChange(page)}
             variant="body1"
             sx={{
               margin: '0.5rem',
-              backgroundColor: currentPage === page + 1 ? '#0a3269' : 'transparent',
-              color: currentPage === page + 1 ? 'white' : 'white',
+              backgroundColor: currentPage === page ? '#0a3269' : 'transparent',
+              color: currentPage === page ? 'white' : 'white',
               border: '1px solid',
               borderColor: '#0a3269',
               borderRadius: '4px',
               padding: '6px 16px',
               cursor: 'pointer',
               '&:hover': {
-                backgroundColor: currentPage === page + 1 ? '#0a3269' : '#c77309',
+                backgroundColor: currentPage === page ? '#0a3269' : '#c77309',
               },
             }}
           >
-            {page + 1}
+            {page}
           </Typography>
         ))}
       </Box>
