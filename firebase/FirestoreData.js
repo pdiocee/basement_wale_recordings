@@ -42,9 +42,14 @@ const FirestoreData = () => {
   const [pageSize, setPageSize] = useState(10);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [showFilters, setShowFilters] = useState(true);
 
   const handleFilterIconClick = (event) => {
     setFilterMenuAnchor(event.currentTarget);
+  };
+
+  const handleToggleFilters = () => {
+    setShowFilters(!showFilters);
   };
 
   const handleFilterMenuClose = () => {
@@ -300,6 +305,7 @@ const FirestoreData = () => {
         <MenuItem sx={{ backgroundColor: '#0a3269', marginTop: '0.5rem', '&:hover': {backgroundColor: '#c77309',}, }} onClick={() => handleSort('desc')}>Newest</MenuItem>
         <MenuItem sx={{ backgroundColor: '#0a3269', marginTop: '0.5rem', '&:hover': {backgroundColor: '#c77309',}, }} onClick={() => handleSort('asc')}>Oldest</MenuItem>
         <MenuItem sx={{ backgroundColor: '#0a3269', marginTop: '0.5rem', '&:hover': {backgroundColor: '#c77309',}, }} onClick={() => handleSortAlphabetically()}>A - Z</MenuItem>
+        <MenuItem sx={{ backgroundColor: '#279223', marginTop: '0.5rem', '&:hover': {backgroundColor: '#c77309',}, }} onClick={handleToggleFilters}>{showFilters ? 'Hide Filters' : 'Show Filters'}</MenuItem>
         <MenuItem sx={{ marginTop: '0.5rem' }}>
           <Typography variant="body1" sx={{ marginRight: '1rem' }}>
             Display:
@@ -331,7 +337,7 @@ const FirestoreData = () => {
           position: 'fixed',
           zIndex: 1000,
           bottom: '18rem',
-          right: '1rem',
+          left: '1rem',
           backgroundColor: '#0a3269',
           color: 'white',
           borderRadius: '50%',
@@ -366,31 +372,33 @@ const FirestoreData = () => {
               }}
               sx={{ margin: '1rem', }}
             >
-              <CardContent>
+              <CardContent sx={{ '&:last-child': { padding: '0.5rem' }}}>
                 <Box>
                   <Box>
-                    <Typography sx={{ paddingBottom: '1rem', textAlign: 'center' }} variant="h5">
+                    <Typography sx={{ padding: '0.5rem 0', textAlign: 'center',  }} variant="h5">
                       {item.shabadName}
                     </Typography>
-                    <Container sx={{ textAlign: 'center' }}>
-                      <Button sx={{ margin: '0.5rem' }} variant="contained">
-                        {item.raag}
-                      </Button>
-                      <Button sx={{ margin: '0.5rem' }} variant="contained" color="secondary">
-                        {item.taal}
-                      </Button>
-                      <Button sx={{ margin: '0.5rem' }} variant="contained" color="success">
-                        {item.date}
-                      </Button>
-                      <Button sx={{ margin: '0.5rem' }} variant="contained" color="info">
-                        {item.type}
-                      </Button>
-                      {item.lead_kirtan && (
-                        <Button sx={{ margin: '0.5rem' }} variant="contained" color="error">
-                          {item.lead_kirtan} & {item.lead_tabla}
+                    {showFilters && (
+                      <Container sx={{ textAlign: 'center' }}>
+                        <Button sx={{ margin: '0.5rem' }} variant="contained">
+                          {item.raag}
                         </Button>
-                      )}
-                    </Container>
+                        <Button sx={{ margin: '0.5rem' }} variant="contained" color="secondary">
+                          {item.taal}
+                        </Button>
+                        <Button sx={{ margin: '0.5rem' }} variant="contained" color="success">
+                          {item.date}
+                        </Button>
+                        <Button sx={{ margin: '0.5rem' }} variant="contained" color="info">
+                          {item.type}
+                        </Button>
+                        {item.lead_kirtan && (
+                          <Button sx={{ margin: '0.5rem' }} variant="contained" color="error">
+                            {item.lead_kirtan} & {item.lead_tabla}
+                          </Button>
+                        )}
+                      </Container>
+                    )}
                   </Box>
                 </Box>
               </CardContent>
