@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDocs, getDoc } from 'firebase/firestore';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import ShabadAudioPlayer from '../components/ShabadAudioPlayer';
-import firebaseApp from './firebaseConfig';
+import { firebaseApp } from './firebaseConfig';
 
 import NavigationIcon from '@mui/icons-material/Navigation';
 import ClearIcon from '@mui/icons-material/Clear';
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import { FilterList } from '@mui/icons-material';
 
 import {
@@ -171,7 +173,7 @@ const FirestoreData = () => {
           shabadName: doc.data().shabad_name,
           ...doc.data(),
         }));
-
+  
         const sortedData = sortData(fetchedData, sortOrder);
         setData(sortedData);
         setFilteredData(sortedData);
@@ -180,9 +182,27 @@ const FirestoreData = () => {
         console.error('Error fetching data:', error);
       }
     };
-
+  
     fetchData();
   }, [sortOrder]);
+
+  const handleDownload = async (audioUrl, shabadName) => {
+    try {
+      const storage = getStorage(firebaseApp);
+      const storageRef = ref(storage, audioUrl);
+      const downloadUrl = await getDownloadURL(storageRef);
+  
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.target= '_blank'
+      a.download = `${shabadName}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error handling download:', error);
+    }
+  };
 
   useEffect(() => {
     const filteredResults = data.filter((item) =>
@@ -354,31 +374,46 @@ const FirestoreData = () => {
         {paginatedData.map((item) => (
           <div key={`${item.id}-${item.date}`} style={{ flexBasis: '40%' }}>
             <Card
-              onClick={() =>
-                handleCardClick(
-                  item.audio_url,
-                  item.shabadName,
-                  item.raag,
-                  item.taal,
-                  item.date,
-                  item.type,
-                  item.leadKirtan,
-                  item.leadTabla
-                )
-              }
-              style={{
-                cursor: 'pointer',
-                backgroundColor: item.type === 'Stage' ? '#3F5794' : '#aa6e39',
+      onClick={() =>
+        handleCardClick(
+          item.audio_url,
+          item.shabadName,
+          item.raag,
+          item.taal,
+          item.date,
+          item.type,
+          item.leadKirtan,
+          item.leadTabla
+        )
+      }
+      style={{
+        cursor: 'pointer',
+        backgroundColor: item.type === 'Stage' ? '#3F5794' : '#aa6e39',
+      }}
+      sx={{ margin: '1rem'}}
+    >
+      <CardContent sx={{ '&:last-child': { padding: '0.5rem' }}}>
+        <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+            <Typography sx={{ padding: '0.5rem 0', textAlign: 'center' }} variant="h5">
+              {item.shabadName}
+            </Typography>
+            <DownloadForOfflineIcon
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDownload(item.audio_url, item.shabadName);
               }}
-              sx={{ margin: '1rem', }}
-            >
-              <CardContent sx={{ '&:last-child': { padding: '0.5rem' }}}>
-                <Box>
-                  <Box>
-                    <Typography sx={{ padding: '0.5rem 0', textAlign: 'center',  }} variant="h5">
-                      {item.shabadName}
-                    </Typography>
-                    {showFilters && (
+              sx={{ 
+                fontSize: '1.5rem',
+                color: '#0a3269',
+                cursor: 'pointer',
+                '&:hover': {
+                  color: 'white',
+                },
+              }}
+            />
+          </Box>
+          {showFilters && (
                       <Container sx={{ textAlign: 'center' }}>
                         <Button sx={{ margin: '0.5rem' }} variant="contained">
                           {item.raag}
@@ -399,7 +434,6 @@ const FirestoreData = () => {
                         )}
                       </Container>
                     )}
-                  </Box>
                 </Box>
               </CardContent>
             </Card>
