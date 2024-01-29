@@ -9,6 +9,7 @@ import Link from '@mui/material/Link'
 
 import Login from '../components/Login';
 import ShabadCard from '../components/ShabadCard';
+import Navbar from '../components/Navbar';
 
 export default function Page() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,8 +24,9 @@ export default function Page() {
       <main>
       {isLoggedIn ? (
           <>
+            <Navbar/>
             <Link href='/'>
-              <img src='bwj-banner.webp' alt='A Basement Wale Banner' href='/' style={{ display: 'block', margin: 'auto', maxWidth: '90%', borderRadius: '1rem', marginTop: '2rem' }}/>
+              <img src='bwj-banner.webp' alt='A Basement Wale Banner' href='/' style={{ display: 'block', margin: 'auto', maxWidth: '90%', borderRadius: '1rem', marginTop: '1.5rem' }}/>
             </Link>
             <Typography variant="h4" sx={{ padding: '1rem', textAlign: 'center', }}>Welcome to the Basement&nbsp;Wale Database</Typography>
             <Container sx={{ paddingBottom: '20rem' }}>
