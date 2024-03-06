@@ -80,6 +80,12 @@ const Navbar = () => {
               color: '#ffffff',
             },
           }}>Gallery</Link>
+          <Link href='/podcast' color="inherit" disableRipple sx={{
+            ':hover, :active, :focus': {
+              bgcolor: 'secondary.main',
+              color: '#ffffff',
+            },
+          }}>Podcasts</Link>
         </LinkContainer>
       </NavbarContainer>
     </AppBar>

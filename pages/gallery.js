@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 
 import { styled } from '@mui/system';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography'
 import Gallery from 'react-photo-gallery'
 
 import Login from '../components/Login';
@@ -97,7 +98,7 @@ export default function Page() {
       {isLoggedIn ? (
           <>
             <Navbar/>
-            <Gallery photos={photos} targetRowHeight={360}/>
+            <Typography variant="h4" sx={{ padding: '1rem', textAlign: 'center', }}>This page is a work in progress.</Typography>
           </>
         ) : (
           <Login onLogin={() => setIsLoggedIn(true)} />
